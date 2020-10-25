@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install poetry
 
 WORKDIR /app
-ADD /poetry.lock pyproject.toml /app/
-RUN poetry env use 3.8 && poetry install
+ADD pyproject.toml /app/
+RUN poetry run pip freeze > req.txt && pip install -r req.txt
 
 COPY . .

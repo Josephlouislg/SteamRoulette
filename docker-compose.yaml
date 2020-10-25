@@ -1,0 +1,50 @@
+version: "3.6"
+
+services:
+  base-static: &base-static
+    build:
+      dockerfile: config/docker/Dockerfile.assets
+      context: .
+    networks:
+      - main
+    environment:
+      - STATIC_PATH=/app/SteamRoulette/static
+    volumes:
+      - ./:/app
+  base-app: &base-app
+    build:
+      dockerfile: config/docker/Dockerfile.app
+      context: .
+    networks:
+      - main
+    volumes:
+      - ./:/app
+
+  webpack:
+    <<: *base-static
+    command: npm start
+
+  admin:
+    <<: *base-app
+    command: [
+        "python3.8",
+        "-m",
+        "SteamRoulette.admin",
+        "--port",
+        "5000",
+        "--host",
+        "0.0.0.0",
+        "--config",
+        "/app/config/app.yaml",
+        "--debugger true",
+        "--static-config",
+#        "/app/SteamRoulette/static/manifest",
+    ]
+
+networks:
+  main:
+    driver: bridge
+#    ipam:
+#      config:
+#      - subnet: 172.19.0.0/16
+
