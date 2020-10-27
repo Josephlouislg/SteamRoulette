@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install poetry
 
 WORKDIR /app
-ADD pyproject.toml /app/
-RUN poetry run pip freeze > req.txt && pip install -r req.txt
+ADD pyproject.toml poetry.lock /app/
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-dev
 
 COPY . .

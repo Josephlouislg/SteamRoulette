@@ -4,14 +4,13 @@ RUN apk update && apk add libnotify && apk add gettext && rm -rf /var/cache/apk/
 
 WORKDIR /app
 
-ENV STATIC_PATH /app/SteamRoulette/static
 ENV NODE_PATH /app/node_modules/
 
-ADD package.json .
-ADD package-lock.json .
+ADD roulette/package.json .
+ADD roulette/package-lock.json .
 
 RUN npm install
 
-ADD . .
+ADD ./roulette/ .
 
 ENV PATH /app/node_modules/.bin:$PATH

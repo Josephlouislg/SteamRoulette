@@ -8,9 +8,10 @@ services:
     networks:
       - main
     environment:
-      - STATIC_PATH=/app/SteamRoulette/static
+      - STATIC_PATH=/app/static
     volumes:
-      - ./:/app
+      - ./roulette:/app
+
   base-app: &base-app
     build:
       dockerfile: config/docker/Dockerfile.app
@@ -36,15 +37,25 @@ services:
         "0.0.0.0",
         "--config",
         "/app/config/app.yaml",
-        "--debugger true",
-        "--static-config",
+        "--debug",
+        "true",
+#        "--static_config",
 #        "/app/SteamRoulette/static/manifest",
     ]
+  nginx:
+    image: nginx:1.14.0-alpine
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./config/docker/nginx.conf:/etc/nginx/nginx.conf"
+    networks:
+      main:
+        aliases:
+          - nginx
+    depends_on:
+      - admin
+      - webpack
 
 networks:
   main:
     driver: bridge
-#    ipam:
-#      config:
-#      - subnet: 172.19.0.0/16
-
