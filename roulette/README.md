@@ -119,10 +119,10 @@ CoreUI-React#v3.0.0
 |   │   └── ...      
 │   ├── scss/        #user scss/css source
 │   ├── views/       #views source
-│   ├── App.js
-│   ├── App.test.js
+│   ├── App.jsx
+│   ├── App.test.jsx
 │   ├── polyfill.js
-│   ├── index.js
+│   ├── index.jsx
 │   ├── routes.js    #routes config
 │   └── store.js     #template state example 
 │
