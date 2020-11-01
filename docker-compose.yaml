@@ -5,17 +5,19 @@ services:
     build:
       dockerfile: config/docker/Dockerfile.assets
       context: .
+    image: static:v1
     networks:
       - main
     environment:
       - STATIC_PATH=/app/static
     volumes:
-      - ./roulette:/app
+      - ./roulette/src:/app/src
 
   base-app: &base-app
     build:
       dockerfile: config/docker/Dockerfile.app
       context: .
+    image: app:v1
     networks:
       - main
     volumes:
@@ -23,6 +25,7 @@ services:
 
   webpack:
     <<: *base-static
+    stdin_open: true
     command: npm start
 
   admin:
