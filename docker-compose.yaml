@@ -45,6 +45,20 @@ services:
 #        "--static_config",
 #        "/app/SteamRoulette/static/manifest",
     ]
+
+  postgres:
+    image: postgres:11.9-alpine
+    ports:
+      - "5433:5432"
+    networks:
+      main:
+        aliases:
+          - postgres
+    env_file:
+      - ./config/docker/envs/postgres.env
+    volumes:
+      - "./.volumes/pg/:/var/lib/postgresql/data/"
+
   nginx:
     image: nginx:1.14.0-alpine
     ports:
