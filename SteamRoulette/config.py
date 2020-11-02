@@ -31,7 +31,6 @@ def get_config(config_path, secrets_path=None):
         return config
 
 
-
 def get_static_filename(filename):
     filename = _STATIC_CONFIG.get(filename) or filename
     if filename.startswith(_STATIC_PREFIX):

@@ -9,7 +9,7 @@ from sqlalchemy.orm import (
     Query as SAQuery
 )
 
-from SteamRoulette.lib.rxid import get_current_rxid
+from SteamRoulette.libs.rxid import get_current_rxid
 from SteamRoulette.service.scoping import MasterSlaveScopedSession
 
 
@@ -46,7 +46,6 @@ class Query(SAQuery):
             flat list where elements is the first column.
         """
         return [x for (x, ) in self.all()]
-
 
 
 master_session_factory = sessionmaker(autocommit=True, autoflush=False, query_cls=Query)

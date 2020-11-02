@@ -3,7 +3,7 @@ from contextlib import contextmanager
 import sqlalchemy
 from sqlalchemy.util import ScopedRegistry, ThreadLocalRegistry
 
-from SteamRoulette.lib.decorators import decorator_with_params
+from SteamRoulette.libs.decorators import decorator_with_params
 
 
 class MasterSlaveScopedSession(sqlalchemy.orm.scoping.scoped_session):
