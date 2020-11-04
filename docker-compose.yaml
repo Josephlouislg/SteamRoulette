@@ -42,9 +42,31 @@ services:
         "/app/config/app.yaml",
         "--debug",
         "true",
-#        "--static_config",
-#        "/app/SteamRoulette/static/manifest",
     ]
+  alembic:
+    <<: *base-app
+    volumes:
+      - "./SteamRoulette/:/app/SteamRoulette"
+      - "./config/:/app/config"
+      - "./alembic.ini:/app/alembic.ini"
+      - type: bind
+        source: "./db_schema/alembic"
+        target: "/app/db_schema/alembic"
+    entrypoint: alembic -n alembic:docker
+
+  postgres:
+    image: postgres:11.9-alpine
+    ports:
+      - "5433:5432"
+    networks:
+      main:
+        aliases:
+          - postgres
+    env_file:
+      - ./config/docker/envs/postgres.env
+    volumes:
+      - "./.volumes/pg/:/var/lib/postgresql/data/"
+
   nginx:
     image: nginx:1.14.0-alpine
     ports:

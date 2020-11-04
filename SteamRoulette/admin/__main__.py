@@ -1,10 +1,9 @@
 import argparse
 
-from flask import url_for
-
 from SteamRoulette import admin
 from SteamRoulette.application import create_app, setup_common_jinja_env
 from SteamRoulette.config import get_config, load_static_config
+from SteamRoulette.service.db import init_db
 
 
 def main():
@@ -16,6 +15,10 @@ def main():
     ap.add_argument("--debug", default=False)
     args = ap.parse_args()
     config = get_config(args.config, args.secrets)
+    db_engine, db_engine_slave = init_db(
+        config['postgres'],
+        debug=config['debug']
+    )
     app = create_app(
         config=config,
         app_name='admin',

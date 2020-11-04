@@ -146,6 +146,8 @@ dmypy.json
 
 # production
 /build
+/.volumes
+/.volumes/
 
 # misc
 .DS_Store

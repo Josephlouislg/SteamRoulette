@@ -1,10 +1,12 @@
 from flask import Flask, url_for
 
 from SteamRoulette.config import get_static_filename
+from SteamRoulette.service.db import db
 
 
 def create_app(config, app_name=__name__):
     app = Flask(app_name)
+    db.init_app(app)
     return app
 
 
