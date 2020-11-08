@@ -13,6 +13,11 @@ setuptools = "^50.3.2"
 psycopg2 = "^2.8.6"
 Flask-SQLAlchemy = "^2.4.4"
 alembic = "^1.4.3"
+celery = "^5.0.2"
+redis = "^3.5.3"
+trafaret = "^2.1.0"
+prometheus-client = "^0.8.0"
+dependency-injector = "^4.3.6"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,0 +1,4 @@
+
+
+class Flags(object):
+    pass

@@ -39,10 +39,22 @@ services:
         "--host",
         "0.0.0.0",
         "--config",
-        "/app/config/app.yaml",
-        "--debug",
-        "true",
+        "/app/config/config.yaml",
+        "--debugger",
     ]
+
+  celery:
+    <<: *base-app
+    command: [
+        "python3.8",
+        "-m",
+        "SteamRoulette.tasks",
+        "--queues=high,default",
+        "--config",
+        "/app/config/config.yaml",
+        "--debugger",
+    ]
+
   alembic:
     <<: *base-app
     volumes:
@@ -66,6 +78,28 @@ services:
       - ./config/docker/envs/postgres.env
     volumes:
       - "./.volumes/pg/:/var/lib/postgresql/data/"
+
+  redis:
+    image: redis:6.0.9-alpine
+    ports:
+      - 6379:6379
+    networks:
+      main:
+        aliases:
+          - redis
+    volumes:
+      - "./.volumes/redis/:/data/"
+
+  rabbitmq:
+    image: rabbitmq:3.8.9-alpine
+    ports:
+      - 5672:5672
+    networks:
+      main:
+        aliases:
+          - rabbitmq
+    volumes:
+      - "./.volumes/redis/:/data/"
 
   nginx:
     image: nginx:1.14.0-alpine
