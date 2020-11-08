@@ -1,7 +1,0 @@
-app_name: SteamRoulette
-debug: true
-
-postgres:
-  dsn: postgres+psycopg2://postgres:postgres@postgres:5432/roulette
-  dsn_slave: postgres+psycopg2://postgres:postgres@postgres:5432/roulette
-  echo: false

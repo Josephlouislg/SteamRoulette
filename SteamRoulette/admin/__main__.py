@@ -1,39 +1,38 @@
-import argparse
+import logging
+import sys
 
-from SteamRoulette import admin
-from SteamRoulette.application import create_app, setup_common_jinja_env
-from SteamRoulette.config import get_config, load_static_config
-from SteamRoulette.service.db import init_db
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+from SteamRoulette.admin.app import create_admin_app
+from SteamRoulette.admin.containers import Container
+from SteamRoulette.application import serve
+from SteamRoulette.config import make_parser, load_config, config_trafaret
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--port", type=int, default=5000)
-    ap.add_argument("--host", default='0.0.0.0')
-    ap.add_argument("--config", default='./config/app.yaml')
-    ap.add_argument("--secrets", default=None)
-    ap.add_argument("--debug", default=False)
-    args = ap.parse_args()
-    config = get_config(args.config, args.secrets)
-    db_engine, db_engine_slave = init_db(
-        config['postgres'],
-        debug=config['debug']
+args = make_parser(config_trafaret)
+
+logging.basicConfig()
+logging.root.setLevel(logging.INFO)
+
+
+def main(options):
+    config = load_config(
+        options.config,
+        options.secrets,
+        options.config_defaults
     )
-    app = create_app(
-        config=config,
-        app_name='admin',
-    )
+    container = Container()
+    container.config.from_dict(config)
+    modules = [m for m in sys.modules.values() if 'SteamRoulette' in m.__name__ and hasattr(m, '__path__')]
+    container.init_resources()
+    container.wire(packages=modules)
+    container.init_resources()
 
-    for bp in admin.BLUEPRINTS:
-        url_prefix = '/admin' + (bp.url_prefix or '')
-        app.register_blueprint(bp, url_prefix=url_prefix)
+    app = create_admin_app(config,)
+    app.wsgi_app = ProxyFix(app.wsgi_app)
 
-    with app.app_context():
-        # load_static_config(args.static_config)
-        setup_common_jinja_env(app.jinja_env, debug=config['debug'])
-        app.jinja_env.globals.update({})
-        app.run(host=args.host, port=args.port, debug=args.debug)
+    return app
 
 
 if __name__ == '__main__':
-    main()
+    serve(args.parse_args(), main)

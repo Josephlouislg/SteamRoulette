@@ -1,0 +1,42 @@
+debug: &DEBUG true
+production: false
+
+
+postgres:
+  dsn: postgres+psycopg2://postgres:postgres@postgres:5432/roulette
+  dsn_slave: postgres+psycopg2://postgres:postgres@postgres:5432/roulette
+  echo: false
+
+redis:
+  db: 0
+  host: redis
+  port: 6379
+
+cache:
+  redis:
+    db: 3
+    host: redis
+    port: 6379
+
+flask:
+  secret_key: This string will be replaced with a proper key in production.
+  server_name: example.com:5000
+  wtf_csrf_enabled: true
+  # wtf_csrf_time_limit: # unknow
+  max_content_length: 52428800   # 50MB
+  debug_tb_enabled: *DEBUG
+  debug_tb_intercept_redirects: false
+  debug_tb_profiler_enabled: false
+
+celery:
+  broker_url: amqp://rabbitmq:5672
+  celery_always_eager: false
+  enable_ping_sitemap: false
+
+
+user_auth:
+  redis_client_session_prefix: auth.cs
+  redis_user_session_prefix: auth.us
+  cookie_name: auth
+  cookie_httponly: True
+  cookie_secure: false

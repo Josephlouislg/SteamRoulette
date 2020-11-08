@@ -1,7 +1,9 @@
 import logging
 import typing
+from types import SimpleNamespace
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.engine import Engine
 from sqlalchemy.event import listen
 from sqlalchemy.ext.baked import bake_lazy_loaders
 from sqlalchemy.orm import (
@@ -102,13 +104,16 @@ def init_session_slave(db_engine, sessionmaker_opts):
     session.configure_slave(bind=db_engine, **sessionmaker_opts)
 
 
+class DBEngines(SimpleNamespace):
+    master: Engine
+    slave: Engine
+
+
 def init_db(
         config, sessionmaker_opts=None, slave_sessionmaker_opts=None,
         debug=False,
 ):
     bake_lazy_loaders()
-    # registry.register('postgres.psycopg2_custom', 'hoggy.lib.orm.dialect', 'dialect')
-
     db_engine = create_engine(config, debug)
     if config.get('dsn_slave'):
         slave_db_engine = create_engine_slave(config, debug)
@@ -118,4 +123,4 @@ def init_db(
     init_session_master(db_engine, sessionmaker_opts or {})
     init_session_slave(slave_db_engine, slave_sessionmaker_opts or {})
     log.debug('DB configured: url %s' % config)
-    return db_engine, slave_db_engine
+    return DBEngines(master=db_engine, slave=slave_db_engine)
