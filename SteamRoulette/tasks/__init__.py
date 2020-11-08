@@ -5,7 +5,7 @@ from celery.app.task import Task
 
 def register_tasks(real_app):
     module_names = (
-        'trade_bot'
+        'trade_bot',
     )
     for module_name in module_names:
         mod = importlib.import_module(__name__ + '.' + module_name)
@@ -14,4 +14,5 @@ def register_tasks(real_app):
             if isinstance(attr, Task):
                 attr.app = real_app
             elif isinstance(attr, type(Task)) and attr != Task:
-                attr.bind(real_app)
+                # attr.bind(real_app)
+                pass

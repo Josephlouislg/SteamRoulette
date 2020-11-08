@@ -6,37 +6,16 @@ from functools import partial
 import celery
 import pytz
 from celery import Celery
+from celery.beat import Scheduler
 from celery.loaders.base import BaseLoader
 from celery.schedules import crontab
 from kombu import Queue, Exchange
-from redis import Redis
 
 from SteamRoulette.libs.contextmanagers import nested
 from SteamRoulette.service.db import session
-from SteamRoulette.service.feauture_flags import Flags
 from SteamRoulette.tasks import register_tasks
 
 _local = threading.local()
-
-
-class CeleryTaskManager(object):
-    TASKS_FOR_DROP_KEY = "TASKS_FOR_DROP_KEY"
-
-    def __init__(self, redis: Redis, flags: Flags):
-        self._redis = redis
-        self._flags = flags
-
-    def need_drop_task(self, task_name: str) -> bool:
-        return bool(self._redis.sismember(self.TASKS_FOR_DROP_KEY, task_name))
-
-    def drop_task(self, task_name: str):
-        self._redis.sadd(self.TASKS_FOR_DROP_KEY, task_name)
-
-    def remove_task_from_drop_set(self, task_name: str):
-        self._redis.srem(self.TASKS_FOR_DROP_KEY, task_name)
-
-    def get_stopped_tasks(self):
-        return [task_name.decode() for task_name in self._redis.smembers(self.TASKS_FOR_DROP_KEY)]
 
 
 class CeleryLoader(BaseLoader):
@@ -68,12 +47,39 @@ def configure_schedule(app, config):
     local_crontab = partial(crontab, nowfun=local_timezone_nowfun)
 
     CELERYBEAT_SCHEDULE = {
-        'build-tagged-tasks-heap': {
-            'task': 'hoggy.task.seo_tools.build_tagged_tasks_heap',
-            'schedule': celery_config['HEAP_REBUILD_SCHEDULE'],
+        'SteamRoulette.tasks.trade_bot.test': {
+            'task': 'SteamRoulette.tasks.trade_bot.test',
+            'schedule': crontab(minute='*/5'),
         },
     }
-    app.conf.CELERYBEAT_SCHEDULE = CELERYBEAT_SCHEDULE
+    app.conf.beat_schedule = CELERYBEAT_SCHEDULE
+
+
+class DummyScheduler(Scheduler):
+
+    def __init__(self, *args, **kwargs):
+        self._store = {'entries': {}}
+        super().__init__(*args, **kwargs)
+
+    def setup_schedule(self):
+        self.merge_inplace(self.app.conf.CELERYBEAT_SCHEDULE)
+        self.install_default_entries(self.schedule)
+        self.sync()
+
+    @property
+    def schedule(self):
+        return self._store['entries']
+
+    @schedule.setter
+    def schedule(self, schedule):
+        self._store['entries'] = schedule
+
+    def sync(self):
+        pass
+
+    @property
+    def info(self):
+        return 'dummy scheduler'
 
 
 def init_celery(config):
@@ -95,10 +101,10 @@ def init_celery(config):
 
 def init_queues(app):
     app.conf.update(
-        CELERY_QUEUES=Queues.get_queues(),
-        CELERY_DEFAULT_QUEUE=Queues.DEFAULT.value.name,
-        CELERY_DEFAULT_EXCHANGE=Queues.DEFAULT.value.exchange,
-        CELERY_DEFAULT_ROUTING_KEY=Queues.DEFAULT.value.routing_key,
+        task_queues=Queues.get_queues(),
+        task_default_queue=Queues.DEFAULT.value.name,
+        task_default_exchange=Queues.DEFAULT.value.exchange,
+        task_default_routing_key=Queues.DEFAULT.value.routing_key,
     )
 
 
@@ -142,6 +148,13 @@ class TaskRouter:
 
 
 def setup_task_routes(app):
+    return
     app.conf.update(
-        CELERY_ROUTES=(TaskRouter(app))
+        task_routes={
+            'SteamRoulette.tasks.trade_bot.*': {
+                'queue': Queues.HIGH.value.name,
+                # 'routing_key': Queues.HIGH.value.routing_key,
+                # 'exchange': Queues.HIGH.value.exchange,
+            },
+        }
     )

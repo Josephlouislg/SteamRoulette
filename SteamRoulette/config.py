@@ -17,12 +17,6 @@ logger = logging.getLogger(__name__)
 # There are too many `get_config` calls which needs to be refactored.
 # So keeping this as private var.
 _CONFIG = {}
-
-ICONS_CONFIG = {}
-
-_STATIC_CONFIG = {}
-_STATIC_PREFIX = '/static/'
-
 _NO_DEFAULT_VALUE_CONFIG = ...
 
 
@@ -315,12 +309,12 @@ CeleryCronTraf = t.Dict({
 
 celery_trafaret = MyDict({
     t.Key('broker_url'): t.String,
-    t.Key('celery_always_eager', default=False): t.Bool,
+    t.Key('task_always_eager', default=False): t.Bool,
     t.Key('enable_ping_sitemap', default=True): t.Bool,
     # drop unused messages from celeryev queues
-    t.Key('celery_event_queue_ttl', default=5): t.Int,
-    t.Key('celery_event_queue_expires', default=60): t.Int,
-}).uppercase()
+    t.Key('event_queue_ttl', default=5): t.Int,
+    t.Key('event_queue_expires', default=60): t.Int,
+})
 
 
 auth_trafaret = t.Dict({
@@ -337,7 +331,7 @@ def propagate_duplicates(conf):
     # XXX: get rid of this method eventually
     debug = conf['debug']
     conf['flask']['DEBUG'] = debug
-    conf['celery']['LOCAL_TIMEZONE'] = conf['timezone']
+    conf['celery']['timezone'] = conf['timezone']
     return conf
 
 

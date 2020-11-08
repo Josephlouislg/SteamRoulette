@@ -42,6 +42,19 @@ services:
         "/app/config/config.yaml",
         "--debugger",
     ]
+
+  celery:
+    <<: *base-app
+    command: [
+        "python3.8",
+        "-m",
+        "SteamRoulette.tasks",
+        "--queues=high,default",
+        "--config",
+        "/app/config/config.yaml",
+        "--debugger",
+    ]
+
   alembic:
     <<: *base-app
     volumes:
@@ -80,7 +93,7 @@ services:
   rabbitmq:
     image: rabbitmq:3.8.9-alpine
     ports:
-      - 5672
+      - 5672:5672
     networks:
       main:
         aliases:

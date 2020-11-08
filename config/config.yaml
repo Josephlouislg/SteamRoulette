@@ -30,8 +30,13 @@ flask:
 
 celery:
   broker_url: amqp://rabbitmq:5672
-  celery_always_eager: false
+  task_always_eager: false
   enable_ping_sitemap: false
+
+#celery:
+#  broker_url: amqp://rabbitmq:5672
+#  CELERY_ALWAYS_EAGER: false
+#  enable_ping_sitemap: false
 
 
 user_auth:
