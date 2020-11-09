@@ -1,8 +1,5 @@
 import argparse
-import glob
-import json
 import logging
-import os
 import pathlib
 from datetime import timedelta
 
@@ -240,8 +237,31 @@ class TrafaretValueAction(argparse.Action):
                  .format(field, '\n\t '.join(sorted(match)))))
 
 
-def get_config():
-    return _CONFIG
+def get_config(key, default=_NO_DEFAULT_VALUE_CONFIG):
+    """Gets config value.
+
+    key parameter is a dot-separated keys in config, ie:
+
+    >>> init_config({
+    ...     'flask': {
+    ...         'debug': True,
+    ...         'server_name': 'example.com',
+    ...         },
+    ...     })
+
+    >>> assert get_config('flask.server_name') == 'example.com'
+
+    """
+    try:
+        *head, last = key.split('.')
+        tmp = _CONFIG
+        for k in head:
+            tmp = tmp[k]
+        return tmp[last]
+    except Exception as e:
+        if default != _NO_DEFAULT_VALUE_CONFIG:
+            return default
+        raise e
 
 
 def _to_celery_schedule(d):
@@ -342,6 +362,7 @@ config_trafaret = t.Dict({
     t.Key('enable_geoip', default=True): t.Bool,
     t.Key('country', default='UA'): t.String,
     t.Key('timezone', default='Europe/Kiev'): t.String,
+    t.Key('admin_auth'): auth_trafaret,
     t.Key('postgres'): postgres_trafaret,
     t.Key('redis'): redis_trafaret,
     t.Key('cache'): cache_trafaret,

@@ -45,3 +45,10 @@ user_auth:
   cookie_name: auth
   cookie_httponly: True
   cookie_secure: false
+
+admin_auth:
+  redis_client_session_prefix: admin_auth.cs
+  redis_user_session_prefix: admin_auth.us
+  cookie_name: admin_auth
+  cookie_httponly: True
+  cookie_secure: false
