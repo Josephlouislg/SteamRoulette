@@ -2,7 +2,6 @@ import logging
 import sys
 from functools import partial
 
-from dependency_injector.wiring import Provide
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from SteamRoulette.admin.app import create_admin_app
@@ -14,7 +13,7 @@ from SteamRoulette.libs.auth.middleware import AuthMiddleware
 from SteamRoulette.libs.auth.service import AuthService
 from SteamRoulette.service.taskqueue import init_celery
 
-args = make_parser(config_trafaret)
+ap = make_parser(config_trafaret)
 
 logging.basicConfig()
 logging.root.setLevel(logging.INFO)
@@ -31,7 +30,11 @@ def _init_admin_auth(config, app, auth: AuthService):
     return app
 
 
-def main(options):
+def main(options=None, args=None):
+    assert options or args
+    if options is None:
+        options = ap.parse_args(args)
+
     config = load_config(
         options.config,
         options.secrets,
@@ -60,4 +63,4 @@ def main(options):
 
 
 if __name__ == '__main__':
-    serve(args.parse_args(), main)
+    serve(ap.parse_args(), main)
