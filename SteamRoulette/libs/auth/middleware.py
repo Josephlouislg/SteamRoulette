@@ -4,6 +4,7 @@ from http.cookies import SimpleCookie
 from werkzeug.exceptions import BadRequest
 from werkzeug.wrappers import Response
 
+from SteamRoulette.libs.auth.service import AuthService
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ def is_https(env):
 
 class AuthMiddleware(object):
 
-    def __init__(self, app, auth_service, *,
+    def __init__(self, app, auth_service: AuthService, *,
                  cookie_name='auth', max_age=3600 * 24 * 365,
                  domain=None, httponly=False,
                  path='/', secure=None, header_token=False):

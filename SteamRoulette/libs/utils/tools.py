@@ -14,3 +14,7 @@ def get_remote_address(request):
         address = _pat.split(address)[-1]
 
     return address or ''
+
+
+def ok(**data):
+    return dict(status='ok', **data)

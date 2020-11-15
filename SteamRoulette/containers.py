@@ -31,6 +31,12 @@ class AppContainer(containers.DeclarativeContainer):
         db_engines=db_engines,
         config=config.admin_auth,
     )
+    admin_auth_s = providers.Singleton(
+        init_admin_auth,
+        redis=redis,
+        db_engines=db_engines,
+        config=config.admin_auth,
+    )
     admin_provider = providers.Factory(AdminProvider, admin_auth=admin_auth)
     admin_auth_service = providers.Factory(
         UserAuthService,
