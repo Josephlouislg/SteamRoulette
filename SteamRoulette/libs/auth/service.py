@@ -10,8 +10,27 @@ from sqlalchemy.orm import sessionmaker
 from werkzeug.local import LocalStack
 from werkzeug.utils import cached_property
 
+from SteamRoulette.libs.auth.session import DummySessionStorage
+from SteamRoulette.libs.auth.users import AuthenticatedUser, AnonymousUser
 from SteamRoulette.models.user_session import UserSession, DeviceTypes
 from SteamRoulette.service.db import DBEngines
+
+
+class _RemoteUser:
+
+    def __init__(self, user_id, scopes):
+        self.user_id = user_id
+        self.scopes = scopes
+
+    @classmethod
+    def loads(cls, string):
+        user_id, _, scopes_data = string.partition(':')
+        scopes = tuple(scopes_data.split(',') if scopes_data else [])
+        return cls(user_id, scopes)
+
+    def dumps(self):
+        return '{user_id}:{scopes}'.format(user_id=self.user_id,
+                                           scopes=','.join(self.scopes))
 
 
 class _Context:

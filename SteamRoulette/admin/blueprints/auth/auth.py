@@ -15,6 +15,8 @@ log = logging.getLogger(__name__)
 
 
 def _serialize_admin(admin):
+    if not admin:
+        return {}
     return {
         'admin': {
             'name': admin.first_last_name,
@@ -50,6 +52,6 @@ def logout_c(admin_auth_service: UserAuthService = Provide[AppContainer.admin_au
 
 
 @bp.route('/info')
-def show():
+def info():
     admin = request.admin
     return ok(data=_serialize_admin(admin))
