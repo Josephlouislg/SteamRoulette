@@ -66,6 +66,14 @@ services:
         target: "/app/db_schema/alembic"
     entrypoint: alembic -n alembic:docker
 
+  pgpatch:
+    <<: *base-app
+    volumes:
+      - "./SteamRoulette/:/app/SteamRoulette"
+      - "./apply_patches.py:/app/apply_patches.py"
+      - "./config/:/app/config"
+    entrypoint: python apply_patches.py --config="/app/config/config.yaml" -l INFO
+
   postgres:
     image: postgres:11.9-alpine
     ports:

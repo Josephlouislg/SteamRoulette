@@ -22,7 +22,6 @@ class BaseUser(Base):
     status = Column(EnumInt(STATUS), default=STATUS.active)
     email = Column(Unicode(255), nullable=False, unique=True)
     first_name = Column(Unicode(100))
-    middle_name = Column(Unicode(100))
     last_name = Column(Unicode(100))
     date_created = Column(DateTime, default=datetime.utcnow, nullable=False)
     _password = Column(Unicode(255), nullable=False, name='password')
