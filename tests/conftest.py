@@ -3,7 +3,7 @@ from SteamRoulette.config import init_config as _init_config, _CONFIG
 
 
 pytest_plugins = [
-    'SteamRoulette.tests.fixtures.db_fixtures',
+    'tests.fixtures.db_fixtures',
     # 'tests.fixtures.util_fixtures'
 ]
 

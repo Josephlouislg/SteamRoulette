@@ -13,8 +13,7 @@ from SteamRoulette.admin.__main__ import main as admin_main
 def admin_app():
     root_dir = pathlib.Path(__file__)
     root_dir = root_dir.parent.parent.parent.parent
-    config = root_dir / 'config' / 'tests/app.yaml'
-    print(config.absolute())
+    config = root_dir / 'SteamRoulette/config' / 'tests/app.yaml'
     return admin_main(
         args=[
             '-c',
