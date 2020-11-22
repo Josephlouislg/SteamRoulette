@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 def _serialize_admin(admin):
     if not admin:
-        return None
+        return {"admin": None}
     return {
         'admin': {
             'name': admin.first_last_name,

@@ -1,14 +1,12 @@
-import React, {useState} from 'react'
-import { Redirect,  Link } from 'react-router-dom'
+import React, {useContext, useState} from 'react'
+import { Redirect } from 'react-router-dom'
 import {
-  CButton,
   CCard,
   CCardBody,
   CCardGroup,
   CCol,
   CContainer,
   CForm,
-  CInput,
   CInputGroup,
   CInputGroupPrepend,
   CInputGroupText,
@@ -16,9 +14,12 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import aio from "../../../aio";
+import {AuthContext} from "../../../auth/AuthContext";
 
-const Login = ({user, onLogin}) => {
+const Login = () => {
   const [state, setState] = useState({email:'', password: ''});
+  const { user, setUser } = useContext(AuthContext);
+
   if (user) {
     return <Redirect to='/' />
   }
@@ -28,7 +29,7 @@ const Login = ({user, onLogin}) => {
         {email: state.email, password: state.password}
     );
     if (result.status === 'ok') {
-      onLogin()
+      setUser(result.data.admin)
     }
   };
   return (

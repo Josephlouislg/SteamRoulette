@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
 
 import {Route, Redirect} from "react-router-dom";
+import {AuthContext} from "./AuthContext";
 
-const RoutesWithAuth = ({user, children}) => {
-    console.log(children)
+const RoutesWithAuth = ({children}) => {
+    const { user } = useContext(AuthContext);
     if (user) {
         return (
             <Route path='/'>
