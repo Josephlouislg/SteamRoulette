@@ -35,6 +35,7 @@ def get_config(config_path, secrets_path=None):
 async def create_app(args):
     config = get_config(args.config, args.secrets)
     middlewares = []
+    logging.basicConfig(level=logging.DEBUG)
     app = web.Application(middlewares=middlewares)
     app['config'] = config
     app['args'] = args

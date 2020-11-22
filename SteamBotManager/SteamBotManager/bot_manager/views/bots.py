@@ -11,7 +11,6 @@ from SteamBotManager.SteamBotManager.services.bot_register import SteamBotRegist
 
 
 log = logging.getLogger(__name__)
-log.setLevel('DEBUG')
 
 
 def registration_process_msg():
