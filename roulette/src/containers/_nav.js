@@ -1,5 +1,25 @@
 export default [
   {
+    _tag: 'CSidebarNavTitle',
+    _children: ['SteamRoulette']
+  },
+  {
+    _tag: 'CSidebarNavDropdown',
+    name: 'Bots',
+    route: '/bots',
+    icon: 'cil-puzzle',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Bot Register',
+        to: '/bots/register',
+      },
+    ],
+  },
+
+
+    // UI GUIDE
+  {
     _tag: 'CSidebarNavItem',
     name: 'Dashboard',
     to: '/dashboard',

@@ -1,4 +1,5 @@
 import React from 'react';
+import BotRegisterForm from "./views/SteamRoulette/SteamBots/bot_registration";
 
 const Toaster = React.lazy(() => import('./views/notifications/toaster/Toaster'));
 const Tables = React.lazy(() => import('./views/base/tables/Tables'));
@@ -78,7 +79,10 @@ const routes = [
   { path: '/notifications/toaster', name: 'Toaster', component: Toaster },
   { path: '/widgets', name: 'Widgets', component: Widgets },
   { path: '/users', exact: true,  name: 'Users', component: Users },
-  { path: '/users/:id', exact: true, name: 'User Details', component: User }
+  { path: '/users/:id', exact: true, name: 'User Details', component: User },
+
+  //  Project
+  { path: '/bots/register', name: 'Steam Bot Registration', component: BotRegisterForm },
 ];
 
 export default routes;

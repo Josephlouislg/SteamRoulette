@@ -1,8 +1,11 @@
 from dependency_injector import containers, providers
 
+from SteamRoulette.admin.admin_provider import AdminProvider
+from SteamRoulette.libs.auth.auth import init_admin_auth
 from SteamRoulette.service.celery_task_manager import CeleryTaskManager
 from SteamRoulette.service.db import init_db
 from SteamRoulette.service.redis import init_redis
+from SteamRoulette.service.user_auth import UserAuthService
 
 
 class AppContainer(containers.DeclarativeContainer):
@@ -18,7 +21,25 @@ class AppContainer(containers.DeclarativeContainer):
         config=config.postgres,
         debug=config.debug
     )
-    celery_task_manager = providers.Resource(
+    celery_task_manager = providers.Singleton(
         CeleryTaskManager,
+        redis=redis
+    )
+    admin_auth = providers.Singleton(
+        init_admin_auth,
+        redis=redis,
+        db_engines=db_engines,
+        config=config.admin_auth,
+    )
+    admin_auth_s = providers.Singleton(
+        init_admin_auth,
+        redis=redis,
+        db_engines=db_engines,
+        config=config.admin_auth,
+    )
+    admin_provider = providers.Singleton(AdminProvider, admin_auth=admin_auth)
+    admin_auth_service = providers.Singleton(
+        UserAuthService,
+        auth=admin_auth,
         redis=redis
     )

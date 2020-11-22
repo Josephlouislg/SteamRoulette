@@ -4,6 +4,9 @@ from io import BytesIO
 from time import time
 from urllib.parse import urljoin
 
+import typing
+
+from dependency_injector.wiring import Provide
 from flask import Flask, request, Response, url_for, Request as _Request, session as flask_session
 from flask.cli import DispatchingApp, ScriptInfo
 from prometheus_client import start_http_server
@@ -13,7 +16,10 @@ from werkzeug.routing import Rule
 from werkzeug.serving import BaseWSGIServer
 from werkzeug.utils import cached_property
 
+from SteamRoulette.admin.containers import AdminContainer
+from SteamRoulette.libs.auth.service import AuthService
 from SteamRoulette.libs.encoders import CustomJSONEncoder
+from SteamRoulette.models.admin_user import UserAdmin
 from SteamRoulette.prometheus_setup import app_exceptions, page_generation_time
 from SteamRoulette.service.db import db
 
@@ -144,6 +150,45 @@ class Request(_Request):
     @cached_property
     def is_moz_prefetch(self) -> bool:
         return self.headers.get('X-Moz', '') == 'prefetch'
+
+
+class AppRequest(Request):
+    def __init__(self, environ, populate_request=True, shallow=False, *,
+                 user_provider,
+                 auth: AuthService):
+        super().__init__(environ, populate_request, shallow)
+        self._user_provider = user_provider
+        self._auth = auth
+
+    @cached_property
+    def user(self) -> 'User':
+        return self._user_provider.get(self)
+
+    @property
+    def session_key(self) -> str:
+        return self._auth.client_session.session_key
+
+    @cached_property
+    def is_sudo_session(self) -> bool:
+        return self._user_provider.is_sudo_session()
+
+    @cached_property
+    def admin_id(self) -> int or None:
+        return self._user_provider.admin_id()
+
+
+class AdminRequest(Request):
+    def __init__(
+            self, environ, populate_request=True,
+            shallow=False, *,
+            admin_provider: 'AdminProvider'
+    ):
+        super().__init__(environ, populate_request, shallow)
+        self._admin_provider = admin_provider
+
+    @cached_property
+    def admin(self) -> 'UserAdmin':
+        return self._admin_provider.get(self)
 
 
 class App(Flask):

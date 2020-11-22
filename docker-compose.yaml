@@ -55,16 +55,32 @@ services:
         "--debugger",
     ]
 
-  alembic:
+  ssh: &ssh_base
+    build:
+      context: .
+      dockerfile: config/docker/Dockerfile.ssh
+    volumes:
+      - ./:/app
+    ports:
+      - "5000"
+      - "2000"
+      - "1132:22"
+    networks:
+      main:
+        aliases:
+          - ssh
+          - admin
+    depends_on:
+      - postgres
+      - redis
+
+  pgpatch:
     <<: *base-app
     volumes:
       - "./SteamRoulette/:/app/SteamRoulette"
+      - "./apply_patches.py:/app/apply_patches.py"
       - "./config/:/app/config"
-      - "./alembic.ini:/app/alembic.ini"
-      - type: bind
-        source: "./db_schema/alembic"
-        target: "/app/db_schema/alembic"
-    entrypoint: alembic -n alembic:docker
+    entrypoint: python apply_patches.py --config="/app/config/config.yaml" -l INFO
 
   postgres:
     image: postgres:11.9-alpine
