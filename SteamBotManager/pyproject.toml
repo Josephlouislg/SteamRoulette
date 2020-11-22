@@ -6,6 +6,12 @@ authors = ["josephlouislg <vladstetsenko@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+aiohttp = "^3.7.3"
+prometheus-async = "^19.2.0"
+prometheus-client = "^0.9.0"
+uvloop = "^0.14.0"
+steam = "^1.0.2"
+protobuf = "^3.14.0"
 
 [tool.poetry.dev-dependencies]
 

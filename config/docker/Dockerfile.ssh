@@ -19,8 +19,12 @@ RUN pip install poetry
 
 WORKDIR /app
 ADD pyproject.toml poetry.lock /app/
+ADD SteamBotManager/pyproject.toml SteamBotManager/poetry.lock /app/SteamBotManager/
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev
+
+RUN cd /app/SteamBotManager && poetry config virtualenvs.create false
+RUN cd /app/SteamBotManager && poetry install --no-dev
 
 COPY . .
 
