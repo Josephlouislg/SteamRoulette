@@ -18,19 +18,15 @@ from SteamRoulette.service.db import DBEngines
 
 class _RemoteUser:
 
-    def __init__(self, user_id, scopes):
+    def __init__(self, user_id):
         self.user_id = user_id
-        self.scopes = scopes
 
     @classmethod
     def loads(cls, string):
-        user_id, _, scopes_data = string.partition(':')
-        scopes = tuple(scopes_data.split(',') if scopes_data else [])
-        return cls(user_id, scopes)
+        return cls(string)
 
     def dumps(self):
-        return '{user_id}:{scopes}'.format(user_id=self.user_id,
-                                           scopes=','.join(self.scopes))
+        return '{user_id}'.format(user_id=self.user_id)
 
 
 class _Context:
@@ -118,7 +114,7 @@ class AuthService:
         finally:
             self._ctx_var.pop()
 
-    def sign_in(self, user_ident, scopes, max_age, device_type,
+    def sign_in(self, user_ident, max_age, device_type,
                 client_name=None, remote_addr=None, data=None):
         assert isinstance(user_ident, str)
         session_key = self.client_session.session_key
@@ -128,7 +124,6 @@ class AuthService:
             session_table = UserSession.__table__
             session_data = dict(
                 user_ident=user_ident,
-                scopes=scopes,
                 device_type=device_type,
                 client_name=client_name,
                 remote_addr=remote_addr,
@@ -145,7 +140,7 @@ class AuthService:
             )
             db_session.connection().execute(stmt)
 
-        remote_user = _RemoteUser(user_ident, scopes)
+        remote_user = _RemoteUser(user_ident)
         self.client_session.set('remote_user', remote_user.dumps(), max_age)
         self.client_session.flush()
 

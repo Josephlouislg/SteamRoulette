@@ -87,7 +87,7 @@ class RedisSessionStorage(SessionStorageBase):
         key_ = '{}:{}:{}'.format(self._prefix, session_key, key)
         value_ = self._serializer.dumps(value)
         max_age_ = max_age if max_age is not None else self._default_max_age
-        self._redis_connection.setex(key_, value_, max_age_)
+        self._redis_connection.setex(key_, max_age_, value_)
 
     def delete_key(self, session_key, key, default=None):
         key_ = '{}:{}:{}'.format(self._prefix, session_key, key)

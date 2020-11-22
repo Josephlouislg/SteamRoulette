@@ -42,3 +42,23 @@ class BaseUser(Base):
     def check_password(self, pwd):
         pwhash = self._password
         return check_password_hash(pwhash, pwd)
+
+    @hybrid_property
+    def is_deleted(self):
+        return self.status == self.STATUS.deleted
+
+    @property
+    def first_last_name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    @staticmethod
+    def id_from_ident(ident):
+        if ident is None:
+            return None
+        prefix = 'admin-'
+        if not ident.startswith(prefix):
+            return None
+        try:
+            return int(ident[len(prefix):])
+        except (TypeError, ValueError):
+            return None

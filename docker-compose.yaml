@@ -55,16 +55,23 @@ services:
         "--debugger",
     ]
 
-  alembic:
-    <<: *base-app
+  ssh: &ssh_base
+    build:
+      context: .
+      dockerfile: config/docker/Dockerfile.ssh
     volumes:
-      - "./SteamRoulette/:/app/SteamRoulette"
-      - "./config/:/app/config"
-      - "./alembic.ini:/app/alembic.ini"
-      - type: bind
-        source: "./db_schema/alembic"
-        target: "/app/db_schema/alembic"
-    entrypoint: alembic -n alembic:docker
+      - ./:/app
+    ports:
+      - "5000"
+      - "1132:22"
+    networks:
+      main:
+        aliases:
+          - ssh
+          - admin
+    depends_on:
+      - postgres
+      - redis
 
   pgpatch:
     <<: *base-app

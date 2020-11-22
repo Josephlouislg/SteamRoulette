@@ -47,7 +47,6 @@ class UserSession(Base):
             session_key=self.session_key,
             status=self.status,
             user_ident=self.user_ident,
-            scopes=self.scopes,
             creation_time=self.creation_time,
             expiration_time=self.expiration_time,
             device_type=self.device_type,

@@ -21,3 +21,9 @@ class UserAdmin(BaseUser):
     @classmethod
     def get_by_email(cls, email):
         return session.query(cls).filter_by(email=email).first()
+
+    @property
+    def user_ident(self) -> str:
+        if self.id is None:
+            raise RuntimeError('user must be persisted')
+        return f'admin-{self.id}'

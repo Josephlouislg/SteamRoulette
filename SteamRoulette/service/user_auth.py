@@ -28,7 +28,7 @@ class UserAuthService:
 
     def login(self, user: BaseUser, request, *, device=None, hid=None, mode=None,
               device_type=None, max_age=DEFAULT_LOGIN_TIME):
-        if user.is_deleted():
+        if user.is_deleted:
             raise UserDeletedError(user.id)
         # TODO: check if already logged in
         remote_addr = get_remote_address(request)[:255]
