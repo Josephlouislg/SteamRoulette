@@ -21,7 +21,7 @@ class SteamBot(Base):
     status = Column(EnumInt(STATUS), nullable=False, default=STATUS.active)
     date_created = Column(DateTime, nullable=False, default=datetime.utcnow)
     date_modified = Column(DateTime, nullable=False, default=datetime.utcnow)
-    user_name = Column(String(500), nullable=False)
+    username = Column(String(500), nullable=False)
     password = Column(String(500), nullable=False)
     data = Column(JSONB, nullable=False)
 

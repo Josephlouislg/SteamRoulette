@@ -6,19 +6,28 @@ from aiohttp import web, WSMsgType
 from prometheus_async.aio import time
 
 from SteamBotManager.SteamBotManager.prometheus_setup import RESPONSE_TIME
-
 from SteamBotManager.SteamBotManager.services.bot_register import SteamBotRegistrationService, LoginErrors, WebAuthError
 
 
 log = logging.getLogger(__name__)
 
 
-def registration_process_msg():
+async def save_bot_and_notify(ws, bot_service: SteamBotRegistrationService, msg):
+    bot_id = await asyncio.shield(bot_service.save_bot())
+    msg['bot_id'] = bot_id
+    await ws.send_str(json.dumps(msg))
+
+
+def registration_process_msg(pg_engine):
     ws = yield
     msg = yield
     bot_register_service = None
     if msg['type'] == 'init':
-        bot_register_service = SteamBotRegistrationService(password=msg['password'], username=msg['username'])
+        bot_register_service = SteamBotRegistrationService(
+            password=msg['password'],
+            username=msg['username'],
+            pg_engine=pg_engine
+        )
     register_process = bot_register_service.add_authenticator()
     for error, error_data in register_process:
         if error == LoginErrors.success:
@@ -38,8 +47,14 @@ def registration_process_msg():
             "error_data": {"status_code": e.status_code},
             "message_type": 'bot_registration',
         }
-        yield ws.send_str(json.dumps(resp_data))
-    bot_register_service.save_bot()
+        yield save_bot_and_notify(ws, bot_register_service, resp_data)
+    else:
+        resp_data = {
+            "error": LoginErrors.success.value,
+            "error_data": {"msg": "Success registered"},
+            "message_type": 'bot_registration',
+        }
+        yield save_bot_and_notify(ws, bot_register_service, resp_data)
 
 
 message_types_processors = {
@@ -57,6 +72,7 @@ async def ws_ping_task(ws):
 async def bot_register(request):
     ws = web.WebSocketResponse()
     can_prepare = ws.can_prepare(request)
+
     if not can_prepare.ok:
         rs = web.Response(status=400)
         rs.force_close()
@@ -75,7 +91,7 @@ async def bot_register(request):
                         await ws.send_str(json.dumps({"error_type": message_type}))
                         continue
                     else:
-                        message_processors[message_type] = processor()
+                        message_processors[message_type] = processor(request.app['pg_engine'])
                         next(message_processors[message_type])
                         message_processors[message_type].send(ws)
                 message_process = message_processors[message_type]

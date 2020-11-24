@@ -1,8 +1,12 @@
 from enum import Enum
 
+from aiopg import sa
+from sqlalchemy.dialects.postgresql import insert
 from steam.guard import SteamAuthenticator
 from steam.webauth import MobileWebAuth, CaptchaRequired, LoginIncorrect, EmailCodeRequired, TwoFactorCodeRequired
 import steam.webauth as web_auth
+
+from SteamBotManager.SteamBotManager.models.steam_bot import steam_bot
 
 
 class LoginErrors(Enum):
@@ -21,7 +25,8 @@ class WebAuthError(Exception):
 
 
 class SteamBotRegistrationService(object):
-    def __init__(self, password, username):
+    def __init__(self, password, username, pg_engine: sa.Engine):
+        self._pg_engine = pg_engine
         self._password = password
         self._username = username
         self._guard_secrets = None
@@ -61,17 +66,17 @@ class SteamBotRegistrationService(object):
             else:
                 break
 
-        sa = SteamAuthenticator(backend=wa)
-        sa.add()
+        steam_auth = SteamAuthenticator(backend=wa)
+        steam_auth.add()
         code = yield LoginErrors.guard_setup_code, {"msg": "Enter SMS code for steam guard"}
         yield
-        sa.finalize(code)
-        self._guard_secrets = sa.secrets
+        steam_auth.finalize(code)
+        self._guard_secrets = steam_auth.secrets
         return LoginErrors.success, None
 
     def get_guard(self):
-        sa = SteamAuthenticator(secrets=self._guard_secrets)
-        return sa
+        steam_auth = SteamAuthenticator(secrets=self._guard_secrets)
+        return steam_auth
 
     def check_web_client(self):
         user = web_auth.WebAuth(self._username)
@@ -84,5 +89,18 @@ class SteamBotRegistrationService(object):
             if not resp.status_code == 200:
                 raise WebAuthError(resp.status_code)
 
-    def save_bot(self):
-        pass
+    async def save_bot(self):
+        async with self._pg_engine.acquire() as conn:
+            result = await conn.execute(
+                insert(steam_bot)
+                .values([
+                    {
+                        "username": self._username,
+                        "password": self._password,
+                        "data": {"sa_secrets": {self._guard_secrets}}
+                    }
+                ])
+                .returning(steam_bot.c.id)
+            )
+            ids = [row.id for row in (await result.fetchall())][0]
+            return ids
