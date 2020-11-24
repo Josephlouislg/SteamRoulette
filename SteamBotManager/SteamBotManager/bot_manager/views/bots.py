@@ -28,8 +28,7 @@ def registration_process_msg():
             "error_data": error_data,
             "message_type": 'bot_registration',
         }
-        yield ws.send_str(json.dumps(resp_data))
-        msg = yield
+        msg = yield ws.send_str(json.dumps(resp_data))
         register_process.send(msg['code'])
     try:
         bot_register_service.check_web_client()

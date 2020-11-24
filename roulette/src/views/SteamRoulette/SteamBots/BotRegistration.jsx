@@ -83,11 +83,11 @@ const AuthCodeForm = ({onSubmit, errorData}) => {
     const { msg: msg, captcha_url: captchaUrl } = errorData;
     const onFormSubmit = () => {
       const data = {
-          username: state.code,
+          code: state.code,
           message_type: "bot_registration",
           type: "auth"
       };
-      setState({...state, disable: true})
+      setState({...state, disable: false})
       onSubmit(data)
     };
     const captcha = captchaUrl ? <CImg src={captchaUrl} /> : null

@@ -27,6 +27,10 @@ class SteamBotRegistrationService(object):
         self._guard_secrets = None
 
     def add_authenticator(self):
+        # TODO: USE PROXY
+        # There have been too many login failures from your network in a short time period.
+        # Please wait and try again later.
+
         wa = MobileWebAuth(self._username, password=self._password)
         captcha, email_code, twofactor_code = '', '', ''
         while True:
@@ -48,6 +52,7 @@ class SteamBotRegistrationService(object):
                 twofactor_code = ''
                 error_data = {"msg": "Enter email_code" if not email_code else "Incorrect code. Enter email code"}
                 email_code = yield LoginErrors.email_code, error_data
+                yield
             except TwoFactorCodeRequired:
                 error_data = {"msg": "Enter 2FA code" if not twofactor_code else "Incorrect code. Enter 2FA code"}
                 email_code = ''
