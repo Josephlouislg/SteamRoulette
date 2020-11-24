@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import {BrowserRouter, Route, Switch } from 'react-router-dom';
 import './scss/style.scss';
 import RoutesWithAuth from "./auth/Auth";
 import Login from "./views/pages/login/Login";
@@ -25,7 +25,7 @@ class App extends Component {
 
   render() {
     return (
-      <HashRouter>
+      <BrowserRouter>
           <React.Suspense fallback={loading}>
             <AuthProvider>
               <WebSocketProvider>
@@ -33,17 +33,19 @@ class App extends Component {
                   <Route exact path="/login" name="Login Page" render={props => <Login {...props}/>} />
                   <RoutesWithAuth>
                     <React.Fragment>
-                      <Route exact path="/register" name="Register Page" render={props => <Register {...props}/>} />
-                      <Route exact path="/404" name="Page 404" render={props => <Page404 {...props}/>} />
-                      <Route exact path="/500" name="Page 500" render={props => <Page500 {...props}/>} />
-                      <Route path="/" name="Home" render={props => <TheLayout {...props}/>} />
+                      <Switch>
+                        <Route exact path="/register" name="Register Page" render={props => <Register {...props}/>} />
+                        <Route exact path="/404" name="Page 404" render={props => <Page404 {...props}/>} />
+                        <Route exact path="/500" name="Page 500" render={props => <Page500 {...props}/>} />
+                        <Route path="/" name="Home" render={props => <TheLayout {...props}/>} />
+                      </Switch>
                     </React.Fragment>
                   </RoutesWithAuth>
                 </Switch>
               </WebSocketProvider>
             </AuthProvider>
           </React.Suspense>
-      </HashRouter>
+      </BrowserRouter>
     );
   }
 }
