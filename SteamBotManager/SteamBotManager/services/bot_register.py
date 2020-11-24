@@ -1,4 +1,3 @@
-import json
 from enum import Enum
 
 from steam.guard import SteamAuthenticator
@@ -41,7 +40,7 @@ class SteamBotRegistrationService(object):
                     self._password = yield LoginErrors.invalid_password, error_data
                     yield
                 if isinstance(exp, CaptchaRequired):
-                    captcha = yield LoginErrors.captcha, {"captcha_url": wa.captcha_url}
+                    captcha = yield LoginErrors.captcha, {"captcha_url": wa.captcha_url, "msg": "Enter captcha"}
                     yield
                 else:
                     captcha = ''
