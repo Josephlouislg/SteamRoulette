@@ -72,6 +72,7 @@ class SteamBotRegistrationService(object):
         yield
         steam_auth.finalize(code)
         self._guard_secrets = steam_auth.secrets
+        print(self._guard_secrets)
         return LoginErrors.success, None
 
     def get_guard(self):
@@ -97,7 +98,7 @@ class SteamBotRegistrationService(object):
                     {
                         "username": self._username,
                         "password": self._password,
-                        "data": {"sa_secrets": {self._guard_secrets}}
+                        "data": {"sa_secrets": self._guard_secrets}
                     }
                 ])
                 .returning(steam_bot.c.id)
