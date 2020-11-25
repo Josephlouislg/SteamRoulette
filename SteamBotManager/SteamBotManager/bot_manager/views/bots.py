@@ -39,6 +39,8 @@ def registration_process_msg(pg_engine):
         }
         msg = yield ws.send_str(json.dumps(resp_data))
         register_process.send(msg['code'])
+        
+    resp_data = {}
     try:
         bot_register_service.check_web_client()
     except WebAuthError as e:
@@ -47,13 +49,13 @@ def registration_process_msg(pg_engine):
             "error_data": {"status_code": e.status_code},
             "message_type": 'bot_registration',
         }
-        yield save_bot_and_notify(ws, bot_register_service, resp_data)
     else:
         resp_data = {
             "error": LoginErrors.success.value,
             "error_data": {"msg": "Success registered"},
             "message_type": 'bot_registration',
         }
+    finally:
         yield save_bot_and_notify(ws, bot_register_service, resp_data)
 
 
