@@ -8,3 +8,9 @@ export const authErrors = {
     success: 5,
     webAuthSession: 6
 }
+
+export const botStatuses = {
+    active: 0,
+    deleted: 1,
+    needGuard: 2,
+}

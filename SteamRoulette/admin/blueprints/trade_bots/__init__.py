@@ -1,5 +1,5 @@
-from SteamRoulette.admin.blueprints.trade_bots import bot_registration
+from SteamRoulette.admin.blueprints.trade_bots import steam_bot
 
 BLUEPRINTS = [
-    bot_registration.bp,
+    steam_bot.bp,
 ]

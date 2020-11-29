@@ -14,6 +14,11 @@ export default [
         name: 'Bot Register',
         to: '/bots/register',
       },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Bot List',
+        to: '/bots/list',
+      },
     ],
   },
 

@@ -16,6 +16,7 @@ class SteamBot(Base):
     class STATUS(Enum):
         active = 0
         deleted = 1
+        need_guard = 2
 
     id = Column(Integer, primary_key=True)
     status = Column(EnumInt(STATUS), nullable=False, default=STATUS.active)
