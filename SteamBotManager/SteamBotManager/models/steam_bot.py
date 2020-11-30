@@ -19,6 +19,7 @@ steam_bot = sa.Table(
     sa.Column('date_created', sa.DateTime, nullable=False, default=datetime.utcnow),
     sa.Column('date_modified', sa.DateTime, nullable=False, default=datetime.utcnow),
     sa.Column('username', sa.DateTime, nullable=False,),
+    sa.Column('steam_id', sa.DateTime, nullable=True,),
     sa.Column('password', sa.DateTime, nullable=False),
     sa.Column('data', JSONB, nullable=False)  # {"sa_secrets" {...}}
 )

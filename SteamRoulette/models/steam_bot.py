@@ -24,6 +24,7 @@ class SteamBot(Base):
     date_modified = Column(DateTime, nullable=False, default=datetime.utcnow)
     username = Column(String(500), nullable=False)
     password = Column(String(500), nullable=False)
+    steam_id = Column(String(500), nullable=True)
     data = Column(JSONB, nullable=False)
 
     __table_args__ = (

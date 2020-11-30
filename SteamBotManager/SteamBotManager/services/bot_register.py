@@ -30,6 +30,7 @@ class SteamBotRegistrationService(object):
         self._password = password
         self._username = username
         self._guard_secrets = None
+        self.steam_id = None
 
     def add_authenticator(self):
         # TODO: USE PROXY
@@ -89,6 +90,8 @@ class SteamBotRegistrationService(object):
             resp = user.session.get('https://store.steampowered.com/account/history/')
             if not resp.status_code == 200:
                 raise WebAuthError(resp.status_code)
+        else:
+            self.steam_id = user.steam_id
 
     async def save_bot(self):
         async with self._pg_engine.acquire() as conn:
@@ -98,6 +101,7 @@ class SteamBotRegistrationService(object):
                     {
                         "username": self._username,
                         "password": self._password,
+                        "steam_id": self.steam_id,
                         "data": {"sa_secrets": self._guard_secrets}
                     }
                 ])
