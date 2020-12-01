@@ -32,6 +32,18 @@ psycopg2-binary = ">=2.7.0"
 sa = ["sqlalchemy[postgresql_psycopg2binary] (>=1.1)"]
 
 [[package]]
+name = "anticaptchaofficial"
+version = "1.0.26"
+description = "Official anti-captcha.com library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+py = ">=1.4.32"
+requests = ">=2.22.0"
+
+[[package]]
 name = "async-timeout"
 version = "3.0.1"
 description = "Timeout context manager for asyncio programs"
@@ -142,6 +154,14 @@ description = "psycopg2 - Python-PostgreSQL Database Adapter"
 category = "main"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
+
+[[package]]
+name = "py"
+version = "1.9.0"
+description = "library with cross-python path, ini-parsing, io, code, log facilities"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "pycryptodomex"
@@ -275,7 +295,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "1f54dbb62ed695519b93aadfc998102ce92f01892fadf7caac141b2cff27ada7"
+content-hash = "f0b8f20694a817760295e15258d840b99d394ca309857742e4e770ab36430368"
 
 [metadata.files]
 aiohttp = [
@@ -320,6 +340,9 @@ aiohttp = [
 aiopg = [
     {file = "aiopg-1.0.0-py3-none-any.whl", hash = "sha256:5da7763028b735ebc4c2980ba39ef1ce4f48df1fc05900e036674edd50f0727c"},
     {file = "aiopg-1.0.0.tar.gz", hash = "sha256:32da3c9c73c248c715883fbb0876d66015d9fb6b4946058eb9fd40e86cfff9b4"},
+]
+anticaptchaofficial = [
+    {file = "anticaptchaofficial-1.0.26-py3-none-any.whl", hash = "sha256:a383f4d285cd0e84fce8012a1a2f1c88028cfd59c23a3c92b45b591c571175a1"},
 ]
 async-timeout = [
     {file = "async-timeout-3.0.1.tar.gz", hash = "sha256:0c3c816a028d47f659d6ff5c745cb2acf1f966da1fe5c19c77a70282b25f4c5f"},
@@ -448,6 +471,10 @@ psycopg2-binary = [
     {file = "psycopg2_binary-2.8.6-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:7312e931b90fe14f925729cde58022f5d034241918a5c4f9797cac62f6b3a9dd"},
     {file = "psycopg2_binary-2.8.6-cp39-cp39-win32.whl", hash = "sha256:6422f2ff0919fd720195f64ffd8f924c1395d30f9a495f31e2392c2efafb5056"},
     {file = "psycopg2_binary-2.8.6-cp39-cp39-win_amd64.whl", hash = "sha256:15978a1fbd225583dd8cdaf37e67ccc278b5abecb4caf6b2d6b8e2b948e953f6"},
+]
+py = [
+    {file = "py-1.9.0-py2.py3-none-any.whl", hash = "sha256:366389d1db726cd2fcfc79732e75410e5fe4d31db13692115529d34069a043c2"},
+    {file = "py-1.9.0.tar.gz", hash = "sha256:9ca6883ce56b4e8da7e79ac18787889fa5206c79dcc67fb065376cd2fe03f342"},
 ]
 pycryptodomex = [
     {file = "pycryptodomex-3.9.9-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:5e486cab2dfcfaec934dd4f5d5837f4a9428b690f4d92a3b020fd31d1497ca64"},

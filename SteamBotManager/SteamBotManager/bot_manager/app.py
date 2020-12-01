@@ -3,6 +3,7 @@ import yaml
 from aiohttp import web
 
 from SteamBotManager.SteamBotManager.bot_manager.views.bots import bot_register
+from SteamBotManager.SteamBotManager.services.captcha_resolver import CaptchaService
 from SteamBotManager.SteamBotManager.signals import (
     init_metrics_server,
     init_session,
@@ -45,7 +46,7 @@ async def create_app(args):
     app = web.Application(middlewares=middlewares)
     app['config'] = config
     app['args'] = args
-
+    app['captcha_service'] = CaptchaService(app['captcha']['api_key'])
     app.on_startup.extend((
         init_session,
         init_metrics_server,
