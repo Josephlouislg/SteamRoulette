@@ -1,10 +1,12 @@
 import logging.handlers
+from asyncio import get_running_loop
 from urllib.parse import urlparse
 
-from aiohttp import web, ClientSession, ClientTimeout, DummyCookieJar
+from aiohttp import web, ClientSession, ClientTimeout, DummyCookieJar, TCPConnector
 from aiopg import sa
 from prometheus_async.aio.web import start_http_server
 
+from SteamBotManager.SteamBotManager.services.captcha_resolver import CaptchaService
 
 log = logging.getLogger(__name__)
 
@@ -46,5 +48,23 @@ async def create_db_engine(app: web.Application) -> None:
     app['pg_engine'] = engine
 
 
-def destroy_db_engine(app: web.Application) -> None:
+async def destroy_db_engine(app: web.Application) -> None:
     app['pg_engine'].close()
+
+
+async def init_captcha_service(app: web.Application) -> None:
+    headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
+    captcha_session = ClientSession(
+        timeout=ClientTimeout(5),
+        cookie_jar=DummyCookieJar(),
+        headers=headers,
+        connector=TCPConnector(loop=get_running_loop(), limit=10)
+    )
+    app['captcha_service'] = CaptchaService(
+        app['config']['captcha']['api_key'],
+        client_session=captcha_session
+    )
+
+
+async def destroy_captcha_service(app: web.Application) -> None:
+    await app['captcha_service'].close()
