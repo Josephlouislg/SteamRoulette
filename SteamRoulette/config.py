@@ -299,6 +299,11 @@ cache_trafaret = t.Dict({
 })
 
 
+captcha_trafaret = t.Dict({
+    'api_key': t.String,
+})
+
+
 flask_trafaret = MyDict({
     t.Key('secret_key'): t.String,
     t.Key('server_name'): t.String,
@@ -366,6 +371,7 @@ config_trafaret = t.Dict({
     t.Key('postgres'): postgres_trafaret,
     t.Key('redis'): redis_trafaret,
     t.Key('cache'): cache_trafaret,
+    t.Key('captcha'): captcha_trafaret,
     t.Key('flask'): flask_trafaret,
     t.Key('celery'): celery_trafaret,
     t.Key('user_auth'): auth_trafaret,
