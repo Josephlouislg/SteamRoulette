@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import { useHistory } from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {
   CBadge,
   CCard,
@@ -10,7 +10,6 @@ import {
   CRow
 } from '@coreui/react'
 
-import usersData from '../../users/UsersData'
 import aio from "../../../aio";
 import {botStatuses} from "./botConstants";
 
@@ -36,6 +35,15 @@ const getStatusTitle = status => {
   }
 }
 const fields = ['id', 'username', 'date_created', 'date_modified', 'status']
+
+const ItemLink = ({item, field}) => {
+  const uri = `/bot/${item.id}`;
+  return (
+    <td>
+      <Link to={uri}>{item[field]}</Link>
+    </td>
+  )
+}
 
 const BotList = ({match}) => {
   const [state, setState] = React.useState({botList: null, isLoading: true, page: parseInt(match.params.page || 1)})
@@ -87,12 +95,13 @@ const BotList = ({match}) => {
               scopedSlots={{
                 'status':
                 (item) => (
-                <td>
-                  <CBadge color={getStatus(item.status)}>
-                    {getStatusTitle(item.status)}
-                  </CBadge>
-                </td>
-                )
+                  <td>
+                    <CBadge color={getStatus(item.status)}>
+                      {getStatusTitle(item.status)}
+                    </CBadge>
+                  </td>
+                ),
+                'username': (item) => <ItemLink item={item} field="username"/>
               }}
             />
           </CCardBody>

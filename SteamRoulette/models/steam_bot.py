@@ -38,3 +38,9 @@ class SteamBot(Base):
     def sa_secrets(self, value):
         self.data['sa_secrets'] = value
         flag_modified(self, self.data.key)
+
+    @hybrid_property
+    def revocation_code(self):
+        if not self.sa_secrets:
+            return
+        return self.sa_secrets['revocation_code']

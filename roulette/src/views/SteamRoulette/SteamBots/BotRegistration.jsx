@@ -139,7 +139,6 @@ const BotRegisterForm = () => {
           if (msg.message_type !=='bot_registration') {
             return
           }
-          console.log(msg);
           setState({...state, formState: msg.error, errorData: msg.error_data})
         };
         subscribe(receiveMessage)
