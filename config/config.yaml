@@ -52,3 +52,7 @@ admin_auth:
   cookie_name: admin_auth
   cookie_httponly: True
   cookie_secure: false
+
+
+captcha:
+  api_key: ca1ac789a8a489835ef45042a0fe4735

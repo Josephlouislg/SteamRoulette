@@ -110,6 +110,8 @@ services:
     image: rabbitmq:3.8.9-alpine
     ports:
       - 5672:5672
+    logging:
+      driver: "none"
     networks:
       main:
         aliases:

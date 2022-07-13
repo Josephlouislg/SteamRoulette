@@ -3,7 +3,15 @@ import yaml
 from aiohttp import web
 
 from SteamBotManager.SteamBotManager.bot_manager.views.bots import bot_register
-from SteamBotManager.SteamBotManager.signals import init_metrics_server, init_session, destroy_session
+from SteamBotManager.SteamBotManager.signals import (
+    init_metrics_server,
+    init_session,
+    destroy_session,
+    create_db_engine,
+    destroy_db_engine,
+    init_captcha_service,
+    destroy_captcha_service,
+)
 
 log = logging.getLogger(__name__)
 
@@ -39,14 +47,17 @@ async def create_app(args):
     app = web.Application(middlewares=middlewares)
     app['config'] = config
     app['args'] = args
-
     app.on_startup.extend((
         init_session,
         init_metrics_server,
+        create_db_engine,
+        init_captcha_service,
     ))
 
     app.on_cleanup.extend((
         destroy_session,
+        destroy_db_engine,
+        destroy_captcha_service,
     ))
 
     app.router.add_route(
